@@ -1,0 +1,134 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,left=3cm,right=2cm,top=3cm,bottom=2cm]{geometry} 
+\usepackage{graphicx} 
+\usepackage{natbib} 
+\usepackage[pdftex, colorlinks, citecolor=blue, linkcolor=blue, hyperindex]{hyperref}
+\usepackage{listings} % Para inputar codigo de outras linguagens
+\usepackage{amsfonts} % Simbolo de numero reais
+\usepackage{amsmath} % Para usar o \dfrac{}{}
+\usepackage{pdflscape}
+\title{Visualization of Complex Covariance Matrices: an application in Pol{SAR} data}
+\author {Antônio Marcos Larangeiras}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+%=====================
+\section{Introduction}
+%=====================
+
+O radar de abertura sintética polarizado (PolSAR) é uma tecnologia poderosa, porque possui a capacidade de obter informações físicas dos alvos e assim produzir imagens de alta resolução da superfície da Terra. Esse tipo de tecnologia possibilita o sensoriamento remoto em quase todas as condições meteorológicas tanto pelo dia quanto pela noite~\citep{zhang-2015,liu-2015}.
+
+Este tipo de imageamento pode ser utilizado para diversas apli\-ca\-ções, como por exemplo: em agricultura, auxiliando na previsão de safras, identificação de culturas, monitoramento de umidade do solo; em florestas, monitorando desmatamento e desertificação; em neve e gelo, monitorando o ciclo d'água; em áreas urbanas, monitorando o crescimento das cidades e desastres naturais dentre outras. Existem vários satélites de alta resolução atuando com polarimetria, por exemplo: F-SAR, ALOS-PALSAR,RADARSAT-2, TerraSAR-X, TanDEM-X~\citep{Meneses,Lee-2009,Chen-Liu-2013,Jagdhuber-2013,Chen-Si-Wei-2013,deledalle-2015,liu-2015,usami-2016}.
+
+O sistema PolSAR é uma forma avançada do sistema SAR que concentra-se em emitir e receber ondas eletromagnéticas totalmente polarizadas~\citep{ma-2015}. 
+
+\textcolor{red}{A distribuição Wishart complexa escalonada multivariada tem sido utilizada com êxito como modelo estatístico para regiões homogêneas em imagens PolSAR. Essa distribuição possui dois parâmetros: uma matriz de covariância ($C$) e o número de looks ($L$). O primeiro parâmetro caracteriza os dados retornados sob análise e, portanto, diferencia o comportamento de diferentes alvos sobre a mesma imagem. O segundo parâmetro está relacionado ao ruído e é definido como o número médio de amostras estatisticamente independentes representadas por cada pixel~\citep{Frery-2013,Nascimento-2014}.}   
+
+Análise Estatística Multivariada é a análise estatística simultânea sobre um conjunto de variáveis. A matriz de covariância é de extrema importância em Análise Multivariada pois permite mensurar e avaliar o grau de dependência entre as variáveis que compõem o conjunto de dados. Na análise Multivariada de dados é extremamente relevante a utilização de gráficos e diagramas, pois facilita a organização e extração de informação dos dados~\citep{anderson-1958, Everitt-2011}.
+
+Vários trabalhos de visualização sobre dados multivariados que assumem valores reais foram propostos na literatura. Por exemplo: \citet{Rousseeuw-1994} construíram um gráfico tridimensional de todas as combinações possíveis ($\rho_{XY}$, $\rho_{XZ}$, $\rho_{YZ}$), onde $X, Y$ e $Z$ são variáveis aleatórias; \citet{Murdoch-1996} propuseram a exibição de correlações através de elipses que apresenta um gráfico intuitivo para matriz de correlação. Um outro método bastante interessante foi a utilização de uma mapa de calor~\citep{Friendly-2002}.
+
+Devemos ressaltar que os trabalhos anteriores foram desenvolvidos para a visualização de uma única matriz de correlação. \citet{tokuda-2011} propuseram uma ferramenta de visualização em quatro camadas para matrizes de covariância. Técnicas de visualizações são relevantes para pesquisadores obterem informações sobre os dados.
+
+Esse trabalho apresenta uma nova ferramenta para visualizar propriedades de matrizes de covariância complexa, em particular, na avaliação da estrutura de covariância em imagens PolSAR. Mostramos para várias imagens que esta ferramenta expõe características para serem analisadas e comparadas. O Nosso objetivo principal é oferecer uma ferramenta que facilite nosso entendimento sobre esse modelo multivariado.
+
+\textcolor{red}{Esse trabalho organiza-se da seguinte maneira: No capítulo~\ref{dois} resumiremos os principais conceitos e técnicas que dão base para a construção da ferramenta de visualização. No capítulo~\ref{tres} detalharemos o processo de criação da ferramenta para visualização de matrizes de covariância complexa. Discussão sobre os resultados obtidos são apresentados no capítulo~\ref{quatro}. E, finalizamos com a conclusão no capítulo~\ref{cinco}.}  
+
+
+
+%============================================================================
+\section{PolSAR data and descritive mensure to multivariate data}\label{dois}
+%============================================================================
+
+
+Cada célula de resolução na imagem PolSAR está associada a uma matriz de espalhamento complexa. Essa matriz caracteriza os dados PolSAR single-look
+
+\begin{equation}\label{matriz_espalhamento}
+S =\begin{bmatrix}
+S_{HH} & S_{HV}\\
+S_{HV} & S_{VV}  
+\end{bmatrix}
+\end{equation}
+em que $S_{pq}$ representa o sinal de retroespalhamento para a $p$-ésima transmissão e $q$-ésima recepção de uma polarização linear (para $p,q\in \{H,V\}$ onde H-horizontal e V-vertical) combinando a amplitude $\vert S_{pq}\vert$ e fase $S_{pq}=\vert S_{pq}\vert e^{i\phi_{pq}}$. Uma outra maneira, de caracterizar os dados PolSAR single-look é utilizar a matriz de covariância 
+
+\begin{equation}\label{matriz_covariancia}
+C = ss^{*}=\begin{bmatrix}
+\langle \vert S_{HH}\vert^2\rangle & \langle \sqrt{2}S_{HH}S^{*}_{HV}\rangle & \langle S_{HH}S^{*}_{VV}\rangle\\
+\langle \sqrt{2}S_{HV}S^{*}_{HH}\rangle & \langle 2\vert S_{HV}\vert^2\rangle & \langle \sqrt{2}S_{HV}S^{*}_{VV}\rangle\\
+\langle S_{VV}S^{*}_{HH}\rangle & \langle \sqrt{2}S_{VV}S^{*}_{HV}\rangle & \langle \vert S_{VV}\vert^2\rangle  
+\end{bmatrix}
+\end{equation}
+em que $s=[S_{HH}\ \ S_{HV}\ \ S_{VV}]^{t}$ é o vetor que simplifica a matriz de espalhamento definida em~\ref{matriz_espalhamento} e $[\cdot]^{t}$ é o operador transposição~\citep{Lee-2009,ma-2015}. 
+
+Podemos supor uma generalização para o vetor $s$, isto é, um sistema com $m$ canais de polarização. Assim, esse vetor aleatório complexo é denotado por
+\begin{equation}
+{\bf y}=[S_{1}\ \ \cdots \ \ S_{m}]^{t}\label{vet_generalizado}
+\end{equation}
+em que $S_{j}$ com $j=1,\dots,m$ são variáveis aleatórias associadas a cada canal de polarização e $[\cdot]^{t}$ é o operador transposição~\citep{Frery-2014}. O vetor~\ref{vet_generalizado} é modelado pela distribuição Gaussiana complexa com médio zero, como é argumentado em~\citep{Goodman-1963}. 
+
+\textcolor{red}{No processamento de imagens PolSAR, a matriz de dados speckle polarimétrico multilook obtidas pelo sinal de espalhamento normalmente são médias de $L$ amostras independentes e identicamente distribuídas, que é dada por
+\begin{equation}
+{\bf Z}=\frac{1}{L}\sum_{i=1}^{L}{\bf y}_{i}{\bf y}_{i}^{*}
+\end{equation}
+em que {\bf y} é definido em~\ref{vet_generalizado}~\citep{Frery-2014}. }
+
+\textcolor{red}{O modelo estatístico mais utilizado para descrever o sinal retroespalhado PolSAR é a distribuição Wishart complexa escalonada multivariada. Denotada por ${\bf Z} \sim \mathcal{W}(C,L)$ e com sua densidade dada por 
+\begin{equation*}%\mequation{Densdidade da distribuição Wishart complexa escalonada multivariada.}
+f_{\bf Z}({\bf Z'},C,L)=\dfrac{L^{mL}\vert {\bf Z'} \vert^{L-m}\exp{(-L\mbox{tr}(C^{-1}{\bf Z'}))} }{\vert C \vert^{L}\Gamma_{m}(L)},
+\end{equation*}
+onde $m$ é a dimensão  de $C$, $m\leq L$, $\Gamma_{m}(L)=\pi^{m(m-1)/2}\prod_{k=0}^{m-1}\Gamma(L-k)$, $\Gamma(\cdot)$ é a função gamma, $E({\bf Z})=C$, $\mbox{tr}(\cdot)$ é o traço de uma matriz e $\vert \cdot \vert$ é o determinante de uma matriz.~\citep{Frery-2013,Frery-2014,Nascimento-2014}.}
+
+\textcolor{red}{Essa distribuição possui dois parâmetros: $C$, a matriz de covariância complexa, e $L \geq 1$, o número de looks. O domínio de $C$ é o conjunto (cone) de matrizes hermitianas positivas definidas. A matriz de covariância $C$ é o parâmetro que caracteriza os dados retornados sob análise e, portanto, diferencia o comportamento de diferentes alvos sobre a mesma imagem.}
+
+Nas imagens Pol{SAR} o valor em cada coordenada é representado por uma matriz de valores complexos, denominada ``matriz de covariância associada a {\bf y}'' definida da seguinte forma:
+\begin{equation*}%\mequation{Par\^ametro Matriz de Covari\^ancia Complexa.}
+C=E({\bf y}_{i}{\bf y}_{i}^{*})=\begin{bmatrix}
+	E(S_{1}S_{1}^{*})	&	E(S_{1}S_{2}^{*})	&	\cdots	&	E(S_{1}S_{m}^{*})\\
+	E(S_{2}S_{1}^{*})	&	E(S_{2}S_{2}^{*})	&	\cdots	&	E(S_{2}S_{m}^{*})\\
+		\vdots			&			\vdots		&	\ddots	&		\vdots		\\
+	E(S_{m}S_{1}^{*})	&	E(S_{m}S_{2}^{*})	&	\cdots	&	E(S_{m}S_{m}^{*})\\		
+\end{bmatrix}.
+\end{equation*}
+onde $S_{ij}$ representa o sinal de retroespalhamento para a $i$-ésima transmissão e $j$-ésima recepção de uma polarização linear, os elementos da diagonal principal são números reais positivos, e {denominam-se} ``intensidades''\label{intensidades}, o ``$*$'' denota o conjugado de um número complexo, por fim $E(\cdot)$ denota o operador esperança estatística~\citep{Lee-2009,Nascimento-2014}.
+
+A \textit{variância efetiva} e a \textit{dependência efetiva} para vetores aleatórios reais são medidas descritivas para dados multivariados.  Seja ${\bf X}$ um vetor aleatório com variáveis aleatórias reais, a variância efetiva é dada por
+$$V_{e}({\bf X})=\vert \Sigma \vert^{\frac{1}{p}}=(\lambda_{1}\cdots \lambda_{p})^{\frac{1}{p}},$$
+em que $\Sigma$ é a matriz de covariância, $\vert \cdot \vert$ é o determinante, $p$ é a dimensão de $\Sigma$ e os $\lambda_{i}$ (com $i=1,\ldots, p$) são os autovalores da matriz de covariância. A dependência efetiva é definida por
+$$D_{e}({\bf X})= 1-\vert R \vert^{\frac{1}{p}}, $$
+em que $R$ é a matriz de correlação de $\Sigma$. 
+Essas medidas tem a capacidade de permitir comparar variáveis aleatórias multivariadas de diferente dimensão~\citep{Pena-2003}. 
+
+%==================================================================================================
+\section{Visualization of Complex Covariance Matrices: an application in Pol{SAR} data}\label{tres}
+%==================================================================================================
+
+%================================
+\subsection{Some Images Pol{SAR}}
+%================================
+
+%===========================
+\subsection{Easy usage in R}
+%===========================
+
+%===========================================
+\section{Results and Analysis}\label{quatro}
+%===========================================
+
+%=================================
+\section{Conclusions}\label{cinco}
+%=================================
+
+\newpage
+
+\bibliographystyle{abbrvnat-larangeiras}
+\bibliography{../../Bibliography/referencias-larangeiras-all}
+
+
+\end{document}
